@@ -48,8 +48,13 @@ class _NewsPageState extends State<NewsPage> {
                         title: Text(articleList[index].title),
                         subtitle: Row(
                           children: [
-                            Text('${articleList[index].time} | '),
-                            Text('${articleList[index].by} | '),
+                            Text(
+                              DateTime.fromMicrosecondsSinceEpoch(
+                                      articleList[index].time)
+                                  .toString()
+                                  .substring(0, 10),
+                            ),
+                            Text(' | ${articleList[index].by} | '),
                             Text('${articleList[index].type}'),
                           ],
                         ),
