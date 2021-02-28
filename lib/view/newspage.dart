@@ -64,7 +64,7 @@ class _NewsPageState extends State<NewsPage> {
                               style: TextStyle(fontSize: 16.0),
                             ),
                             Text(
-                              ' | ${articleList[index].by} | ',
+                              ' | by: ${articleList[index].by} | ',
                               style: TextStyle(fontSize: 16.0),
                             ),
                             Text(
