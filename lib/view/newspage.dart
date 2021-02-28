@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hackernews_topstories/models/article.dart';
 import 'package:hackernews_topstories/services/article_details.dart';
 import 'package:hackernews_topstories/services/locator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsPage extends StatefulWidget {
   @override
@@ -32,8 +34,11 @@ class _NewsPageState extends State<NewsPage> {
         child: articleList != null && articleList.isNotEmpty
             ? ListView.builder(
                 padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
-                itemCount: articleList.length,
+                itemCount: articleList.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == articleList.length) {
+                    return CupertinoActivityIndicator();
+                  }
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10.0,
@@ -45,7 +50,10 @@ class _NewsPageState extends State<NewsPage> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: ListTile(
-                        title: Text(articleList[index].title),
+                        title: Text(
+                          articleList[index].title,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
                         subtitle: Row(
                           children: [
                             Text(
@@ -53,10 +61,25 @@ class _NewsPageState extends State<NewsPage> {
                                       articleList[index].time)
                                   .toString()
                                   .substring(0, 10),
+                              style: TextStyle(fontSize: 16.0),
                             ),
-                            Text(' | ${articleList[index].by} | '),
-                            Text('${articleList[index].type}'),
+                            Text(
+                              ' | ${articleList[index].by} | ',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            Text(
+                              '${articleList[index].type}',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
                           ],
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.launch),
+                          onPressed: () async {
+                            if (await canLaunch(articleList[index].url)) {
+                              await launch(articleList[index].url);
+                            }
+                          },
                         ),
                       ),
                     ),
