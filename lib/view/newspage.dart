@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hackernews_topstories/models/article.dart';
 import 'package:hackernews_topstories/services/article_details.dart';
 import 'package:hackernews_topstories/services/locator.dart';
+import 'package:hackernews_topstories/services/networking.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsPage extends StatefulWidget {
@@ -12,14 +13,33 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   List<Article> articleList = List<Article>();
+  ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
+    int loadTimes = 0;
     loadData();
     super.initState();
+    scrollController.addListener(() async {
+      if (articleList.length != locator.get<Network>().idList.length) {
+        if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
+          loadTimes = loadTimes + 1;
+          await loadMoreData(loadTimes);
+        }
+      }
+    });
   }
 
   Future loadData() async {
     articleList = await locator.get<ArticleDetails>().load();
+    setState(() {});
+  }
+
+  Future loadMoreData(int loadTimes) async {
+    List<Article> moreList =
+        await locator.get<ArticleDetails>().loadMore(loadTimes);
+    articleList = articleList + moreList;
     setState(() {});
   }
 
@@ -34,6 +54,7 @@ class _NewsPageState extends State<NewsPage> {
         child: articleList != null && articleList.isNotEmpty
             ? ListView.builder(
                 padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
+                controller: scrollController,
                 itemCount: articleList.length + 1,
                 itemBuilder: (context, index) {
                   if (index == articleList.length) {
@@ -63,9 +84,11 @@ class _NewsPageState extends State<NewsPage> {
                                   .substring(0, 10),
                               style: TextStyle(fontSize: 16.0),
                             ),
-                            Text(
-                              ' | by: ${articleList[index].by} | ',
-                              style: TextStyle(fontSize: 16.0),
+                            Flexible(
+                              child: Text(
+                                ' | by: ${articleList[index].by} | ',
+                                style: TextStyle(fontSize: 16.0),
+                              ),
                             ),
                             Text(
                               '${articleList[index].type}',

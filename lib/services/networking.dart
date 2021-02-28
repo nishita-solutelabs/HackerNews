@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class Network {
+  final List<int> idList = <int>[];
   Future<List<int>> getTopStoryIds() async {
-    final List<int> idList = <int>[];
+    
 
     Dio dio = Dio();
     try {
