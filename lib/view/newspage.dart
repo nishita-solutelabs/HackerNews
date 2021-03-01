@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hackernews_topstories/models/article.dart';
 import 'package:hackernews_topstories/services/article_details.dart';
+
 import 'package:hackernews_topstories/services/locator.dart';
 import 'package:hackernews_topstories/services/networking.dart';
 import 'package:url_launcher/url_launcher.dart';
